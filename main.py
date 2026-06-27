@@ -38,13 +38,27 @@ def get_win_loss(account_id):
     return response.json()
 
 
+MEDALLAS = [
+    "Sin calificar", "Heraldo", "Guardian", "Cruzado", "Arconte",
+    "Leyenda", "Antiguo", "Divino", "Inmortal",
+]
+
+
+def rank_tier_a_medalla(rank_tier):
+    if not rank_tier:
+        return None
+    medalla = MEDALLAS[rank_tier // 10] if rank_tier // 10 < len(MEDALLAS) else "Desconocido"
+    estrellas = rank_tier % 10
+    return f"{medalla} {estrellas}" if estrellas else medalla
+
+
 def print_player(account_id):
     player = get_player(account_id)
     wl = get_win_loss(account_id)
     profile = player.get("profile", {})
     print("Nombre:", profile.get("personaname"))
     print("Pais:", profile.get("loccountrycode"))
-    print("MMR estimado:", player.get("mmr_estimate", {}).get("estimate"))
+    print("Rango:", rank_tier_a_medalla(player.get("rank_tier")))
     print("Partidas ganadas:", wl.get("win"))
     print("Partidas perdidas:", wl.get("lose"))
 
